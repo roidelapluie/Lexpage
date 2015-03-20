@@ -84,6 +84,25 @@
 
 
         <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Twicy <b class="caret"></b>
+            </a>
+          <ul class="dropdown-menu">
+            {% if user.is_authenticated %}
+              <li><a href="{% url 'blog_draft_create' %}"><span class="fa fa-fw fa-money"></span> Mes mises</a></li>
+              <li class="divider"></li>
+            {% endif %}
+            <li><a href="{% url 'blog_archives' %}"><span class="fa fa-fw fa-"></span> Liste des paris</a></li>
+            <li><a href="{% url 'blog_tags' %}"><span class="fa fa-fw fa-tags"></span> Scores</a></li>
+            {% if user.is_authenticated %}
+              {% if perms.twicy.can_admin %}
+                <li class="divider"></li>
+                <li><a href="{% url 'blog_pending_list' %}"> <span class="fa fa-fw fa-clock-o"></span>Administration</a></li>
+              {% endif %}
+            {% endif %}
+          </ul><!-- menu -->
+        </li><!-- twicy -->
+
+        <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             Autre <b class="caret"></b>
             </a>

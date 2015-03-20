@@ -134,7 +134,8 @@ INSTALLED_APPS = (
     'messaging',
     'board',
     'notifications',
-    
+    'twicy',
+
 )
 
 DATE_FORMAT = 'j F Y'
