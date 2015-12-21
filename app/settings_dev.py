@@ -24,6 +24,8 @@ ALLOWED_HOSTS = ['127.0.0.1',]
 
 LOGGING = None
 
+WSGI_APPLICATION = 'ws4redis.django_runserver.application'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

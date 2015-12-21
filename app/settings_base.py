@@ -20,6 +20,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'context_processors.global_settings',
+                'ws4redis.context_processors.default',
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.request',
                 'django.template.context_processors.debug',
@@ -83,6 +84,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django.contrib.flatpages',
     'captcha',
+    'ws4redis',
 
     'profile',
     'slogan',
@@ -118,6 +120,8 @@ LOGIN_REDIRECT_URL = 'homepage'
 LOGIN_URL = 'auth_login'
 LOGOUT_URL = 'auth_logout'
 
+WEBSOCKET_URL = '/ws/'
+WS4REDIS_HEARTBEAT = '--w4s--'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 USER_IS_ONLINE_TIMEOUT = 5
