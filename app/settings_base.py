@@ -6,6 +6,9 @@ WSGI_APPLICATION = 'wsgi.application'
 ROOT_URLCONF = 'urls'
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
+SELENIUM_TESTS = False
+TESTSERVER_LISTEN_ON_PORT='4040'
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FIXTURE_DIRS = (os.path.join(BASE_DIR, 'fixtures'),)
 
