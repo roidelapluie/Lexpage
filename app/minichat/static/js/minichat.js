@@ -15,8 +15,8 @@ function minichat_init_display(content, get_url) {
 }
 
 function minichat_refresh() {
-    $.get(minichat_content_url, function(data) {
-        $(minichat_content).html(data);
+    $.get("/minichat/latests/", function(data) {
+        $("#minichat-content").html(data);
         replace_invalid_avatar($(minichat_content));
         activate_tooltips($(minichat_content));
     });

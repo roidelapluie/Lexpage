@@ -4,17 +4,22 @@ from django.contrib.auth.models import User
 
 from blog.models import BlogPost
 from board.models import Thread
+from ws4redis.django_runserver import _websocket_url, _websocket_app, _django_app
 
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
+from whitenoise.django import DjangoWhiteNoise
+from tests_helpers import MultiThreadLiveServerTestCase
 
 from selenium.common.exceptions import NoSuchElementException
-from unittest import skipIf
-from django.conf import settings
+from django.test import LiveServerTestCase
 
+def application(environ, start_response):
+    if _websocket_url and environ.get('PATH_INFO').startswith(_websocket_url):
+        return _websocket_app(environ, start_response)
+    return DjangoWhiteNoise(_django_app)(environ, start_response)
 
 class ViewsTests(TestCase):
     fixtures = ['devel']
@@ -58,16 +63,20 @@ class ViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context['thread_list']), 1)
 
-@skipIf(not settings.SELENIUM_TESTS, 'This test does not work with traditional webserver')
-class WebsocketsTests(StaticLiveServerTestCase):
-    _live_server_url = 'http://127.0.0.1:%s' % settings.TESTSERVER_LISTEN_ON_PORT
+class WebsocketsTests(MultiThreadLiveServerTestCase):
+    fixtures=['tests']
+    serialized_rollback = True
+    def _fixture_teardown(self):
+        return super(TestCase, self)._fixture_teardown()
+
 
     @classmethod
     def setUpClass(cls):
-        super(WebsocketsTests, cls).setUpClass()
         cls.selenium = WebDriver()
         cls.selenium.implicitly_wait(10)
         cls.selenium.set_window_size(1280, 1024)
+        super(WebsocketsTests, cls).setUpClass()
+        cls.server_thread.httpd.set_app(application)
 
     @classmethod
     def tearDownClass(cls):
@@ -75,17 +84,19 @@ class WebsocketsTests(StaticLiveServerTestCase):
         super(WebsocketsTests, cls).tearDownClass()
 
     def setUp(self):
+        super(LiveServerTestCase, self).setUp()
         self.login()
 
     def tearDown(self):
         self.logout()
+        super(LiveServerTestCase, self).tearDown()
 
     def find_link_with_icon(self, text):
         xpath = '//a[text()[contains(.,"%s")]]' % (text)
         return self.selenium.find_element_by_xpath(xpath)
 
     def login(self):
-        self.selenium.get('%s%s' % (self._live_server_url, reverse('auth_login')))
+        self.selenium.get('%s%s' % (self.live_server_url, reverse('auth_login')))
         username_input = self.selenium.find_element_by_name("username")
         username_input.send_keys('user1')
         password_input = self.selenium.find_element_by_name("password")

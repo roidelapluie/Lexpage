@@ -8,6 +8,7 @@ jQuery(document).ready(function($) {
     });
 
     function onOpen() {
+        console.log('foo');
         minichat_refresh();
         input = document.querySelector('#minichat_form input.form-control');
         if (input) { input.disabled = false; }
